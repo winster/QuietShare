@@ -1,0 +1,10 @@
+{
+  "xcodeVersion" : "Xcode 8.2.1\nBuild version 8C1002",
+  "commitish" : "v0.1.3",
+  "iOS" : [
+    {
+      "hash" : "c317167ffd49fca2de93209724f76e91dad3cef5b6b65f2f3d4f9065ef107c5e",
+      "name" : "QuietModemKit"
+    }
+  ]
+}
