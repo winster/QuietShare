@@ -9,6 +9,13 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+  var tx: QMFrameTransmitter = {
+    let txConf: QMTransmitterConfig = QMTransmitterConfig(key: "ultrasonic-experimental");
+    let tx: QMFrameTransmitter = QMFrameTransmitter(config:txConf);
+    return tx;
+  }()
+  var rx: QMFrameReceiver?;
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -21,32 +28,31 @@ class ViewController: UIViewController {
   }
 
   @IBAction func transmit(_ sender: Any) {
-    
-    let txConf: QMTransmitterConfig = QMTransmitterConfig(key: "ultrasonic");
-    let tx: QMFrameTransmitter = QMFrameTransmitter(config:txConf);
     let frame_str = "winster@quiet";
     let data = frame_str.data(using: .utf8);
-    tx.send(data);
-    CFRunLoopRun();
-    tx.close();
-    
+    self.tx.send(data);
   }
 
   @IBAction func scan(_ sender: Any) {
     AVAudioSession.sharedInstance().requestRecordPermission({(granted: Bool)-> Void in
       if granted {
-        let rxConf: QMReceiverConfig = QMReceiverConfig(key:"ultrasonic");
-        let rx = QMFrameReceiver(config: rxConf);
-        rx?.setReceiveCallback(receiveCallback);
+        if self.rx == nil {
+          let rxConf: QMReceiverConfig = QMReceiverConfig(key:"ultrasonic-experimental");
+          self.rx = QMFrameReceiver(config: rxConf);
+          self.rx?.setReceiveCallback(self.receiveCallback);
+        }
       } else {
         print("Permission to record not granted")
       }
     })
   }
-  
-  func receiveCallback(frame: NSData) {
-    print("inside callback");
+
+    
+ func receiveCallback(frame: Data?) {
+    let msg = String(data: frame ?? Data(), encoding: String.Encoding.utf8) ?? "data could not be decoded";
+    print(msg)
   }
   
 }
+
 
